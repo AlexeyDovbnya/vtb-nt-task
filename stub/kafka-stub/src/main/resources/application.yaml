@@ -6,6 +6,8 @@ spring:
     url: jdbc:postgresql://localhost:5432/ntdb
     username: nt
     password: nt
+    hikari:
+      maximum-pool-size: 16
 
   kafka:
     bootstrap-servers: localhost:9092
@@ -18,6 +20,7 @@ spring:
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
     listener:
       ack-mode: record
+      concurrency: 12
 
 app:
   topic: nt.persons
