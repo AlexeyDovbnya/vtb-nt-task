@@ -2,9 +2,12 @@
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="NT Kafka nt.persons">
+      <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
         <collectionProp name="Arguments.arguments"/>
       </elementProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
     </TestPlan>
     <hashTree>
       <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
@@ -22,7 +25,81 @@
         </collectionProp>
       </Arguments>
       <hashTree/>
-      <SetupThreadGroup guiclass="SetupThreadGroupGui" testclass="SetupThreadGroup" testname="setUp Thread Group">
+      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="false">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="false">
+        <boolProp name="ResultCollector.error_logging">false</boolProp>
+        <objProp>
+          <name>saveConfig</name>
+          <value class="SampleSaveConfiguration">
+            <time>true</time>
+            <latency>true</latency>
+            <timestamp>true</timestamp>
+            <success>true</success>
+            <label>true</label>
+            <code>true</code>
+            <message>true</message>
+            <threadName>true</threadName>
+            <dataType>true</dataType>
+            <encoding>false</encoding>
+            <assertions>true</assertions>
+            <subresults>true</subresults>
+            <responseData>false</responseData>
+            <samplerData>false</samplerData>
+            <xml>false</xml>
+            <fieldNames>true</fieldNames>
+            <responseHeaders>false</responseHeaders>
+            <requestHeaders>false</requestHeaders>
+            <responseDataOnError>false</responseDataOnError>
+            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+            <assertionsResultsToSave>0</assertionsResultsToSave>
+            <bytes>true</bytes>
+            <sentBytes>true</sentBytes>
+            <url>true</url>
+            <threadCounts>true</threadCounts>
+            <idleTime>true</idleTime>
+            <connectTime>true</connectTime>
+          </value>
+        </objProp>
+        <stringProp name="filename"></stringProp>
+      </ResultCollector>
+      <hashTree/>
+      <SetupThreadGroup guiclass="SetupThreadGroupGui" testclass="SetupThreadGroup" testname="setUp Thread Group" enabled="true">
         <intProp name="ThreadGroup.num_threads">1</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
@@ -33,7 +110,7 @@
         </elementProp>
       </SetupThreadGroup>
       <hashTree>
-        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Init producer">
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Init producer" enabled="true">
           <stringProp name="cacheKey">true</stringProp>
           <stringProp name="filename"></stringProp>
           <stringProp name="parameters"></stringProp>
@@ -71,7 +148,7 @@ SampleResult.setResponseData(&quot;Producer создан. Фамилий: ${surn
         </JSR223Sampler>
         <hashTree/>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Debug">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Debug" enabled="false">
         <intProp name="ThreadGroup.num_threads">1</intProp>
         <intProp name="ThreadGroup.ramp_time">1</intProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
@@ -82,7 +159,7 @@ SampleResult.setResponseData(&quot;Producer создан. Фамилий: ${surn
         </elementProp>
       </ThreadGroup>
       <hashTree>
-        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Kafka send">
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Kafka send" enabled="true">
           <stringProp name="scriptLanguage">groovy</stringProp>
           <stringProp name="parameters"></stringProp>
           <stringProp name="filename"></stringProp>
@@ -140,53 +217,118 @@ SampleResult.setResponseData(&quot;partition=${meta.partition()} offset=${meta.o
         </elementProp>
       </PostThreadGroup>
       <hashTree>
-        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Close producer">
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Close producer" enabled="true">
           <stringProp name="scriptLanguage">groovy</stringProp>
           <stringProp name="parameters"></stringProp>
           <stringProp name="filename"></stringProp>
           <stringProp name="cacheKey">true</stringProp>
-          <stringProp name="script">def p = props.get(&apos;kafkaProducer&apos;)
-if (p != null) { p.flush(); p.close() }</stringProp>
+          <stringProp name="script">// tearDown стартует, пока потоки нагрузки ещё завершают начатые итерации.
+// Ждём, чтобы последние send() успели отработать, иначе получим &quot;producer has been closed&quot;.
+Thread.sleep(3000)
+
+def p = props.get(&apos;kafkaProducer&apos;)
+if (p != null) {
+    props.remove(&apos;kafkaProducer&apos;)
+    p.flush()                                   // дослать всё, что в буфере
+    p.close(java.time.Duration.ofSeconds(10))
+}</stringProp>
         </JSR223Sampler>
         <hashTree/>
       </hashTree>
-      <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree">
-        <boolProp name="ResultCollector.error_logging">false</boolProp>
-        <objProp>
-          <name>saveConfig</name>
-          <value class="SampleSaveConfiguration">
-            <time>true</time>
-            <latency>true</latency>
-            <timestamp>true</timestamp>
-            <success>true</success>
-            <label>true</label>
-            <code>true</code>
-            <message>true</message>
-            <threadName>true</threadName>
-            <dataType>true</dataType>
-            <encoding>false</encoding>
-            <assertions>true</assertions>
-            <subresults>true</subresults>
-            <responseData>false</responseData>
-            <samplerData>false</samplerData>
-            <xml>false</xml>
-            <fieldNames>true</fieldNames>
-            <responseHeaders>false</responseHeaders>
-            <requestHeaders>false</requestHeaders>
-            <responseDataOnError>false</responseDataOnError>
-            <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
-            <assertionsResultsToSave>0</assertionsResultsToSave>
-            <bytes>true</bytes>
-            <sentBytes>true</sentBytes>
-            <url>true</url>
-            <threadCounts>true</threadCounts>
-            <idleTime>true</idleTime>
-            <connectTime>true</connectTime>
-          </value>
-        </objProp>
-        <stringProp name="filename"></stringProp>
-      </ResultCollector>
-      <hashTree/>
+      <com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroup guiclass="com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroupGui" testclass="com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroup" testname="Load">
+        <elementProp name="ThreadGroup.main_controller" elementType="com.blazemeter.jmeter.control.VirtualUserController"/>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <stringProp name="TargetLevel">${__tstFeedback(tst,5,50,10)}</stringProp>
+        <stringProp name="RampUp">0</stringProp>
+        <stringProp name="Steps"></stringProp>
+        <stringProp name="Hold">1210</stringProp>
+        <stringProp name="LogFilename"></stringProp>
+        <stringProp name="Iterations"></stringProp>
+        <boolProp name="same_user_on_next_iteration">false</boolProp>
+        <stringProp name="Unit">S</stringProp>
+      </com.blazemeter.jmeter.threads.concurrency.ConcurrencyThreadGroup>
+      <hashTree>
+        <JSR223Sampler guiclass="TestBeanGUI" testclass="JSR223Sampler" testname="Kafka send" enabled="true">
+          <stringProp name="scriptLanguage">groovy</stringProp>
+          <stringProp name="parameters"></stringProp>
+          <stringProp name="filename"></stringProp>
+          <stringProp name="cacheKey">true</stringProp>
+          <stringProp name="script">import org.apache.kafka.clients.producer.ProducerRecord
+import java.util.concurrent.ThreadLocalRandom
+import java.util.concurrent.TimeUnit
+
+def rnd = ThreadLocalRandom.current()
+
+// --- ИНН ФЛ: 10 случайных цифр + 2 контрольные
+int[] d = new int[12]
+int region = rnd.nextInt(1, 100)       // 01..99, «00» не бывает
+int inspection = rnd.nextInt(1, 100)   // 01..99
+d[0] = region.intdiv(10);     d[1] = region % 10
+d[2] = inspection.intdiv(10); d[3] = inspection % 10
+for (int i = 4; i &lt; 10; i++) d[i] = rnd.nextInt(10)
+
+int[] w11 = [7, 2, 4, 10, 3, 5, 9, 4, 6, 8]
+int[] w12 = [3, 7, 2, 4, 10, 3, 5, 9, 4, 6, 8]
+int s = 0
+for (int i = 0; i &lt; 10; i++) s += w11[i] * d[i]
+d[10] = (s % 11) % 10
+s = 0
+for (int i = 0; i &lt; 11; i++) s += w12[i] * d[i]
+d[11] = (s % 11) % 10
+String inn = (d as List).join(&apos;&apos;)
+
+// --- ФИО: сначала род, потом каждая часть отдельно
+def pick = { List list -&gt; list[rnd.nextInt(list.size())] }
+def g = rnd.nextBoolean() ? &apos;m&apos; : &apos;f&apos;
+String fullName = [pick(props.get(&apos;surname.&apos; + g)),
+                   pick(props.get(&apos;name.&apos; + g)),
+                   pick(props.get(&apos;patronymic.&apos; + g))].join(&apos; &apos;)
+
+def msgId = UUID.randomUUID().toString()          // 36 символов
+String json = &quot;&quot;&quot;{&quot;msg_id&quot;:&quot;${msgId}&quot;,&quot;full_name&quot;:&quot;${fullName}&quot;,&quot;inn&quot;:&quot;${inn}&quot;}&quot;&quot;&quot;
+
+SampleResult.setSamplerData(json)
+def meta
+try {
+    meta = props.get(&apos;kafkaProducer&apos;)
+            .send(new ProducerRecord&lt;String, String&gt;(vars.get(&apos;TOPIC&apos;), msgId, json))
+            .get(10, TimeUnit.SECONDS)
+} catch (InterruptedException e) {
+    // тест останавливается и прервал ожидание ответа брокера:
+    // это не ошибка системы, а незавершённый замер, поэтому из статистики его убираем
+    Thread.currentThread().interrupt()
+    SampleResult.setIgnore()
+    return
+}
+SampleResult.setResponseData(&quot;partition=${meta.partition()} offset=${meta.offset()}&quot;, &apos;UTF-8&apos;)</stringProp>
+        </JSR223Sampler>
+        <hashTree/>
+        <kg.apc.jmeter.timers.VariableThroughputTimer guiclass="kg.apc.jmeter.timers.VariableThroughputTimerGui" testclass="kg.apc.jmeter.timers.VariableThroughputTimer" testname="tst">
+          <collectionProp name="load_profile">
+            <collectionProp name="1951299276">
+              <stringProp name="53">5</stringProp>
+              <stringProp name="53">5</stringProp>
+              <stringProp name="50547">300</stringProp>
+            </collectionProp>
+            <collectionProp name="1951374668">
+              <stringProp name="55">7</stringProp>
+              <stringProp name="55">7</stringProp>
+              <stringProp name="50547">300</stringProp>
+            </collectionProp>
+            <collectionProp name="1568025516">
+              <stringProp name="1569">12</stringProp>
+              <stringProp name="1569">12</stringProp>
+              <stringProp name="50547">300</stringProp>
+            </collectionProp>
+            <collectionProp name="1596209228">
+              <stringProp name="1601">23</stringProp>
+              <stringProp name="1601">23</stringProp>
+              <stringProp name="50547">300</stringProp>
+            </collectionProp>
+          </collectionProp>
+        </kg.apc.jmeter.timers.VariableThroughputTimer>
+        <hashTree/>
+      </hashTree>
     </hashTree>
   </hashTree>
 </jmeterTestPlan>
