@@ -24,3 +24,12 @@ spring:
 
 app:
   topic: nt.persons
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus,threaddump,heapdump
+  metrics:
+    tags:
+      application: kafka-stub
