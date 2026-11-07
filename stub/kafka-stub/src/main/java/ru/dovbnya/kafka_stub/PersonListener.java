@@ -9,6 +9,12 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.util.concurrent.TimeUnit;
 
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Timer;
+
+import java.time.Duration;
+
 @Component
 public class PersonListener {
 
@@ -19,28 +25,57 @@ public class PersonListener {
     private final ObjectMapper mapper;
     private final PersonRepository repository;
 
-    public PersonListener(ObjectMapper mapper, PersonRepository repository) {
+    private final Counter processed;     // обработано сообщений из Kafka
+    private final Counter rowsWritten;   // записано строк в БД
+    private final Timer readTimer;       // время чтения сообщения
+    private final Timer writeTimer;      // время записи строки
+
+    public PersonListener(ObjectMapper mapper, PersonRepository repository, MeterRegistry registry) {
         this.mapper = mapper;
         this.repository = repository;
+
+        this.processed = Counter.builder("stub.kafka.messages.processed")
+                .description("Обработано сообщений из Kafka")
+                .register(registry);
+        this.rowsWritten = Counter.builder("stub.db.rows.written")
+                .description("Записано строк в БД")
+                .register(registry);
+        this.readTimer = Timer.builder("stub.kafka.read")
+                .description("Время чтения сообщения из Kafka")
+                .publishPercentileHistogram()
+                .minimumExpectedValue(Duration.ofMillis(10))
+                .maximumExpectedValue(Duration.ofSeconds(2))
+                .register(registry);
+        this.writeTimer = Timer.builder("stub.db.write")
+                .description("Время записи строки в БД")
+                .publishPercentileHistogram()
+                .minimumExpectedValue(Duration.ofMillis(10))
+                .maximumExpectedValue(Duration.ofSeconds(2))
+                .register(registry);
     }
 
     @KafkaListener(topics = "${app.topic}")
     public void onMessage(ConsumerRecord<String, String> record) {
-        // 1. Чтение: разбор JSON + задержка до 300 мс
         long readStart = System.nanoTime();
         PersonMessage msg = parse(record.value());
         sleepUntil(readStart, READ_MIN_MS);
-        long readMs = elapsedMs(readStart);
+        long readNanos = System.nanoTime() - readStart;
+        readTimer.record(readNanos, TimeUnit.NANOSECONDS);
 
-        // 2. Запись: INSERT + задержка до 50 мс
         long writeStart = System.nanoTime();
         boolean inserted = repository.insert(msg);
         sleepUntil(writeStart, WRITE_MIN_MS);
-        long writeMs = elapsedMs(writeStart);
+        long writeNanos = System.nanoTime() - writeStart;
+        writeTimer.record(writeNanos, TimeUnit.NANOSECONDS);
+
+        if (inserted) {
+            rowsWritten.increment();
+        }
+        processed.increment();
 
         log.info("p={} off={} msg_id={} read={}ms write={}ms inserted={}",
-                record.partition(), record.offset(), msg.msgId(), readMs, writeMs, inserted);
-        // метод завершился без исключения → Spring закоммитит оффсет (ack-mode: record)
+                record.partition(), record.offset(), msg.msgId(),
+                TimeUnit.NANOSECONDS.toMillis(readNanos), TimeUnit.NANOSECONDS.toMillis(writeNanos), inserted);
     }
 
     private PersonMessage parse(String json) {
