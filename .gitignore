@@ -3,5 +3,6 @@
 target/
 *.jtl
 jmeter.log
+jmeter/report/
 dumps/
 *.hprof
